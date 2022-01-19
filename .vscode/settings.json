@@ -1,0 +1,12 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "tmrisn",
+            "group": "yang",
+            "database": "${workspaceFolder:code}/tmrisn.db"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
