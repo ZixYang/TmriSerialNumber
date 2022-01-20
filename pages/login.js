@@ -1,9 +1,9 @@
 import * as React from 'react';
+import axios from 'axios';
 import { useState } from 'react';
 import { useRouter } from 'next/dist/client/router';
-import axios from 'axios'
 import Avatar from '@mui/material/Avatar';
-import LoadingButton from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,7 +11,9 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { Snackbar,Alert} from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert'
 
 // import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -62,7 +64,7 @@ export default function SignIn() {
           open:true
         })
 
-        router.push('index')
+        router.push('tmrisn')
       }else{
         setSnacker({
           ...snacker,
@@ -83,14 +85,19 @@ export default function SignIn() {
 
   return (
     <ThemeProvider theme={theme}>
+      {
+        loading && (
+          <LinearProgress />
+          )
+      }
       <Container component="main" maxWidth="xs">
 
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}
-        // onClose={handleClose}
+        onClose={()=>{setSnacker({...snacker,open:false})}}
         // message="I love snacks"
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         key={vertical + horizontal}
       >
         <Alert severity={severity} sx={{ width: '100%' }}>
@@ -137,14 +144,14 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <LoadingButton loading={loading}
+            <Button
               type="submit"
               fullWidth
-              variant="contained"
+              variant="outlined"
               sx={{ mt: 3, mb: 2 }}
             >
               登  录
-            </LoadingButton>
+            </Button>
             <Grid container>
               <Grid item xs>
                 <Link href="forgetpassword" variant="body2">

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/dist/client/router';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -8,10 +10,13 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-// import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LinearProgress from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert'
 
 function Copyright(props) {
   return (
@@ -29,18 +34,71 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignUp() {
+  const router = useRouter()
+  const [loading,setLoading]=useState(false)
+  const [snacker,setSnacker]=useState({
+    open:false,
+    severity:'success',
+    msg:""
+  })
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    
+    setLoading(true)
+    axios.post('api/user/register',{
+      userName:data.get('userName'),
+      realName:data.get('realName'),
+      password:data.get('password'),
+      phone:data.get('phone'),
+      email:data.get('email')
+    }).then(res=>{
+      setLoading(false)
+      if(res.data.code===1){
+        setSnacker({
+          open:true,
+          severity:'success',
+          msg:'注册成功'
+        })
+      }else{
+        setSnacker({
+          open:true,
+          severity:'error',
+          msg:res.data.msg
+        })
+      }
+    })
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    // console.log({
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    // });
   };
 
   return (
     <ThemeProvider theme={theme}>
+      {
+        loading && (
+          <LinearProgress />
+          )
+      }
+      <Snackbar
+            anchorOrigin={{ vertical:"top", horizontal:"center" }}
+            open={snacker.open}
+            onClose={()=>{
+              setSnacker({...snacker,open:false})
+              snacker.severity==='success' ? router.push('/login'):null
+            }}
+            // message="I love snacks"
+            autoHideDuration={2000}
+          >
+            <Alert severity={snacker.severity} sx={{ width: '100%' }}>
+              {snacker.msg}
+            </Alert>
+          </Snackbar>
+      
+      
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -72,10 +130,27 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
+                  name="realName"
                   required
                   fullWidth
+                  id="realName"
+                  label="真实姓名"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  name="phone"
+                  required
+                  fullWidth
+                  id="phone"
+                  label="手机号码"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
                   id="email"
-                  label="Email Address"
+                  label="Email"
                   name="email"
                   autoComplete="email"
                 />

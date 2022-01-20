@@ -22,9 +22,15 @@ model SerialNumber{
 model User{
   id Int @id @default(autoincrement())
   userName String
-  password String
+  pwd String
   email String?
   phone String?
   realName  String
-  role  String
+  role  Int?
+}
+
+model Role{
+  id Int @id @default(autoincrement())
+  roleName String
+  parentId Int
 }
