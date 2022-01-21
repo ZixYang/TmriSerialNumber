@@ -14,6 +14,7 @@ model SerialNumber{
   id Int @id @default(autoincrement())
   snType  String?
   city  String
+  organization String?
   sn  String
   editTime  DateTime @default(now())
   editUser  String

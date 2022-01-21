@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma=new PrismaClient()
 
-export default function handler(req,res){
+export default async function handler(req,res){
     let {page,size,city} = req.query
     if(!page){
         page=1
@@ -11,7 +11,7 @@ export default function handler(req,res){
         size=10
     }
 
-    const list=prisma.serialNumber.findMany({
+    let list= await prisma.serialNumber.findMany({
         skip:(page-1) * size,
         take: size,
         where:{
@@ -24,5 +24,5 @@ export default function handler(req,res){
         }
     })
 
-    res.json(list)
+    res.json({code:1,msg:"成功",data:list})
 }
