@@ -2,6 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useState } from 'react';
 import { useRouter } from 'next/dist/client/router';
+import {getCsrfToken} from "next-auth/react"
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -33,11 +34,23 @@ function Copyright(props) {
   );
 }
 
+const ERROR_MSG={
+  invalid:"用户名或密码错误"
+}
+//获取初始化csrfToken
+export async function getServerSideProps(context) {
+  return {
+      props: {
+          csrfToken: await getCsrfToken(context),
+      },
+  }
+}
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function SignIn(props) {
   const router=useRouter()
+  const errmsg=router?.query?.msg
   const [loading,setLoading]=useState(false)
   const [snacker,setSnacker]=useState({
     open:false,
@@ -48,15 +61,27 @@ export default function SignIn() {
   })
   const {open,vertical,horizontal,severity,msg}=snacker
 
+  React.useEffect(()=>{
+    if(errmsg){
+      setSnacker({
+        ...snacker,
+        open:true,
+        msg:errmsg
+      })
+    }
+  },[])
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
     setLoading(true)
-    axios.post('api/user/login',{
+    axios.post('api/auth/callback/credentials',{
       username:formData.get('username'),
-      password:formData.get('password')
+      password:formData.get('password'),
+      csrfToken:props.csrfToken
     }).then(res=>{
+      console.log(res)
       setLoading(false)
       if(res.data.code===1){
         setSnacker({
@@ -74,11 +99,7 @@ export default function SignIn() {
         })
       }
     })
-    // eslint-disable-next-line no-console
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
+    
 
   };
 

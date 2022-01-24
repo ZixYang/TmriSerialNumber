@@ -12,5 +12,5 @@ export default async function handler(req,res){
         }
     })
 
-    res.status(200).json(entity?{code:1,msg:""}:{code:0,msg:"登录失败"})
+    res.status(200).json(entity.userName?{code:1,msg:""}:{code:0,msg:"登录失败"})
 }

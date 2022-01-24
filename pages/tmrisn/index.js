@@ -6,6 +6,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert'
 import LinearProgress from '@mui/material/LinearProgress'
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -51,8 +52,9 @@ const columns = [
 export const SearchCtx=React.createContext({})
 
 
-
 export default function TmriSnGrid() {
+  const {data:session}=useSession()//获取当前登录session
+  console.log(session)
   const [loading,setLoading]=useState(true)
   const [snacker,setSnacker]=useState({
       open:false,
