@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useState,useEffect,useContext } from 'react';
+import Search from './search'
 import { DataGrid } from '@mui/x-data-grid';
-import useSWR from 'swr';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert'
 import LinearProgress from '@mui/material/LinearProgress'
 import axios from 'axios';
-import { Button, TextField } from '@mui/material';
-import {FormGroup,FormControl,InputLabel,Select,MenuItem,KeyboardArrowRightIcon} from '@mui/material'
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -50,77 +48,9 @@ const columns = [
   }
 ];
 
-const SearchCtx=React.createContext({})
+export const SearchCtx=React.createContext({})
 
-export function Search(){
-  const [city,setCity]=useState('')
-  const [org,setOrg]=useState('')
-  const [cities,setCities]=useState([])
-  const [orgs,setOrgs]=useState([])
-  const {conditions,setConditions}=useContext(SearchCtx)
 
-  useEffect(()=>{
-    async ()=>{
-      const res = await axios.get('/api/tmrisn/conditions');
-      if(res){
-        const {cities,orgs}=res;
-        setCities(cities)
-        setOrgs(orgs)
-        }
-      }
-    
-  },[])
-  const handleSearch=(event)=>{
-    setConditions({
-      ...conditions,
-      index:1,
-      city,
-      org
-    })
-  }
-  const handleCityChange=(event)=>{
-    console.log(event)
-    setCity(event.target.value)
-  }
-  const handleOrgChange=(event)=>{
-    console.log(event)
-    setOrg(event.target.value)
-  }
-  return (
-    <FormGroup className="MuiFormGroup-options" row>
-      <FormControl variant="standard">
-        <InputLabel>选择所在城市</InputLabel>
-        <Select value={city} onChange={handleCityChange}>
-          {
-            cities && cities.map(c=>{
-              <MenuItem value={c}>{c}</MenuItem>
-            })
-          }
-          
-        </Select>
-      </FormControl>
-      <FormControl variant="standard">
-        <InputLabel>选择所属机构</InputLabel>
-        <Select value={org} onChange={handleOrgChange}>
-          {
-            orgs && orgs.map(o=>{
-              <MenuItem value={o}>{o}</MenuItem>
-            })
-          }
-          
-        </Select>
-      </FormControl>
-      <Button
-        size="small"
-        variant="outlined"
-        color="primary"
-        onClick={handleSearch}
-      >
-        <KeyboardArrowRightIcon fontSize="small" /> 查询
-      </Button>
-    </FormGroup>
-  )
-}
 
 export default function TmriSnGrid() {
   const [loading,setLoading]=useState(true)
